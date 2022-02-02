@@ -9,6 +9,7 @@
 <body>
     <?php
         $Tarifs = array("T1"=>0.794, "T2"=>0.883, "T3"=>0.9451, "T4"=> 1.0489, "T5"=>1.2915, "T6"=>1.4975);
+        $tranch = array("tranch1"=>1,"tranch2"=>2,"tranch3"=>3,"tranch4"=>4,"tranch5"=>5,"tranch6"=>6);
         $Trn1 = 100 * $Tarifs["T1"];
         $Trn3 = 210 * $Tarifs["T3"];
         $Trn4 = 310 * $Tarifs["T4"];

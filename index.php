@@ -29,9 +29,12 @@
         $CalibreType;
         $Totale = array();
         $TotaleHT = array();
+       
         if(isset($_POST["Submit"])){
             $max = $_POST["max"];
             $min = $_POST["min"];
+            $THT=0;
+            $Total=0;
             $CalibreType = $_POST['Calibre'];
             if (empty($max) || empty($min) || empty($CalibreType)) {
                 echo "<script>alert(\"max or min , type is empty\")</script>";
@@ -44,7 +47,9 @@
             if($moyen <= 150){
                 if($moyen <= $Table[0] -> borne_maximale ){
                     $Totale[0] = $moyen;
-                    $TotaleHT[0] = $moyen * $Table[0] -> prix_unitaire;
+                    $TotaleHT[0] =  $moyen * $Table[0] -> prix_unitaire;
+                    $Tranch = $tranch["tranch1"];
+                    
                     //tva
                     // $Totale_TVA = $Totale * $tva + $tambre;
                 }
@@ -53,6 +58,9 @@
                     $Totale[1] = $moyen - $Totale[0];
                     $TotaleHT[0] = $Totale[0] * $Table[0] -> prix_unitaire;
                     $TotaleHT[1] = $Totale[1] * $Table[1] -> prix_unitaire;
+                    $Tranch = $tranch["tranch1"];
+                    $Tranch = $tranch["tranch2"];
+
                     //tva
                     // $CTarif2_TVA = $CTarif2 * $tva;
                     // $CTarif1_TVA = $CTarif1 * $tva;
@@ -64,6 +72,7 @@
                 if($moyen <= $Table[2] -> borne_maximale && $moyen >= $Table[2] -> borne_minimale){
                     $Totale[2] = $moyen;
                     $TotaleHT[2] = $moyen * $Table[2] -> prix_unitaire;
+                    $Tranch = $tranch["tranch3"];
                     // $Totale = $moyen * $Table[2] -> prix_unitaire;
                     //tva
                     // $Totale_TVA = ($Totale * $tva) + $tambre;
@@ -71,6 +80,7 @@
                 elseif ($moyen <= $Table[3]-> borne_maximale && $moyen >= $Table[3] -> borne_minimale) {
                     $Totale[3] = $moyen;
                     $TotaleHT[3] = $moyen * $Table[3] -> prix_unitaire;
+                    $Tranch = $tranch["tranch4"];
                     // $Totale =  $moyen * $Table[3] -> prix_unitaire;
                 
                     //tva
@@ -80,6 +90,7 @@
                 elseif ($moyen <= $Table[4] -> borne_maximale && $moyen >= $Table[4]-> borne_minimale) {
                     $Totale[4] = $moyen;
                     $TotaleHT[4] = $moyen * $Table[4] -> prix_unitaire;
+                    $Tranch = $tranch["tranch5"];
                     // $Totale = $moyen * $Table[4] -> prix_unitaire;
                     //tva
                     // $Totale_TVA = ( $Totale * $tva) + $tambre;
@@ -87,6 +98,7 @@
                 else{
                     $Totale[5] = $moyen;
                     $TotaleHT[5] = $moyen * $Table[5] -> prix_unitaire;
+                    $Tranch = $tranch["tranch6"];
                     // $Totale = $moyen * $Table[5]-> prix_unitaire;
                     //tva
                     // $CTarif6_TVA = $CTarif6 * $tva;
@@ -106,6 +118,18 @@
                   $TypeCalibre =  $calibre["calibreMax"];
               }
             // }
+            foreach($TotaleHT as $key => $value)
+            {
+              $THT += $TotaleHT[$key];
+            }
+            foreach($Totale as $key => $value)
+            {
+              $Total += $Totale[$key] ;
+            }
+            $nbrTranche = 0;
+            foreach($tranch as $key => $value){
+              $nbrTranche += $tranch[$key];
+            }
         }
         
 ?>
@@ -187,8 +211,8 @@
       <?php 
       if(isset($_POST["Submit"])){ ?>
         <div class="col-4 col-md-6 col-lg-3 d-flex justify-content-center" >Ancien index : <?php echo $max ?></div>
-        <div class="col-5 col-md-6 col-lg-5 d-flex justify-content-center">Nouvel index : <?php echo $min ?></div>
-        <div class="col-3 col-md-6 col-lg-4 d-flex justify-content-center">Consommation : <?php echo $moyen ?></div>
+        <div class="col-4 col-md-6 col-lg-5 d-flex justify-content-center">Nouvel index : <?php echo $min ?></div>
+        <div class="col-4 col-md-6 col-lg-4 d-flex justify-content-center">Consommation : <?php echo $moyen ?></div>
       <?php
             }
       ?>
@@ -218,19 +242,21 @@
           <td></td>
           <td></td>
           <td></td>
-          <td>إستھلاك الكھرباء</td>
+          <td class="right">إستھلاك الكھرباء</td>
         </tr>
       <?php 
       if(isset($_POST["Submit"])){
         foreach($Totale as $key => $value){
+          
       ?>
         <tr>
-            <td></td>
+            <td>TRANCHE<?php echo " $Tranch "?></td>
             <td><?php echo $value ?></td>
             <td><?php echo $Table[$key]->prix_unitaire ?></td>
             <td><?php echo $TotaleHT[$key] ?></td>
             <td><?php echo $tva . "%";?></td>
             <td><?php echo $TotaleHT[$key] * $tva /100 ?></td>
+            <td class="right"><?php echo " $Tranch "?>الشطر</td>
         </tr>
         <?php
             }
@@ -246,7 +272,7 @@
           <td><?php echo $TypeCalibre?></td>
           <td><?php echo $tva . "%";?></td>
           <td><?php echo $TypeCalibre * $tva /100 ?></td>
-          <td> إثاوة   ثابتة الكھرباء </td>
+          <td class="right"> إثاوة   ثابتة الكھرباء </td>
         </tr>
         <?php
         }
@@ -258,10 +284,11 @@
           <td></td>
           <td></td>
           <td></td>
-          <td>الرسوم المؤداة لفائدة الدولة </td>
+          <td class="right">الرسوم المؤداة لفائدة الدولة </td>
         </tr>
         <?php 
           if(isset($_POST["Submit"])){
+            //  for($i=0;$i<count($TotaleHT);$i++){
         ?>
         <tr>
           <td class="text-secondary">TOTAL TVA</td>
@@ -269,11 +296,12 @@
           <td></td>
           <td></td>
           <td></td>
-          <td><?php echo $SOUS_Toatla = ($TotaleHT[$key] * $tva /100)+ ($TypeCalibre * $tva /100)?></td>
-          <td class="text-secondary">مجموع ض.ق.م</td>
+          <td><?php echo $SOUS_Toatla = ($Total * $tva /100) + ($TypeCalibre * $tva /100)?></td>
+          <td class="text-secondary right">مجموع ض.ق.م</td>
         </tr>
         <?php
         }
+        //  }
         ?>
         <?php 
         if(isset($_POST["Submit"])){
@@ -285,7 +313,7 @@
           <td></td>
           <td></td>
           <td><?php echo $tambre?></td>
-          <td class="text-secondary">الطابع</td>
+          <td class="text-secondary right">الطابع</td>
         </tr>
         <?php
         }
@@ -297,10 +325,10 @@
           <td>SOUS-TOTAL</td>
           <td></td>
           <td></td>
-          <td><?php echo $SOUS_THT=$TotaleHT[$key] + $TypeCalibre ?></td>
+          <td><?php echo $SOUS_THT = $THT+ $TypeCalibre ?></td>
           <td></td>
-          <td><?php echo $SOUS_T=$SOUS_Toatla + $tambre?></td>
-          <td>المجموع الجزئي</td>
+          <td><?php echo $SOUS_T = $SOUS_Toatla + $tambre?></td>
+          <td class="right">المجموع الجزئي</td>
         </tr> 
         <?php
         }
@@ -315,7 +343,7 @@
           <td></td>
           <td><?php echo $SOUS_T + $SOUS_THT?></td>
           <td></td>
-          <td>مجموع  الكھرباء</td>
+          <td class="right">مجموع  الكھرباء</td>
         </tr>
         <?php
         }
