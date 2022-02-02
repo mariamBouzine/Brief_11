@@ -29,12 +29,12 @@
         $CalibreType;
         $Totale = array();
         $TotaleHT = array();
-       
+        $Total=0;
         if(isset($_POST["Submit"])){
             $max = $_POST["max"];
             $min = $_POST["min"];
             $THT=0;
-            $Total=0;
+            
             $CalibreType = $_POST['Calibre'];
             if (empty($max) || empty($min) || empty($CalibreType)) {
                 echo "<script>alert(\"max or min , type is empty\")</script>";
@@ -122,10 +122,10 @@
             {
               $THT += $TotaleHT[$key];
             }
-            foreach($Totale as $key => $value)
+            foreach($TotaleHT as $key => $value)
             {
-              $Total += $Totale[$key] ;
-            }
+              $Total +=($TotaleHT[$key]  * $tva /100)  ;
+            } 
             $nbrTranche = 0;
             foreach($tranch as $key => $value){
               $nbrTranche += $tranch[$key];
@@ -162,18 +162,18 @@
     <form action="index.php" method="POST">
       <div class="row row1">
         <div class="col-12 col-md-6 col-lg-3">
-          <label for="fname">Ancien index</label>
+          <label for="fname">Nouvel index</label>
         </div>
         <div class="col-12 col-md-6 col-lg-9">
-          <input type="text" id="fmax" name="max" placeholder="Your max..">
+          <input type="text" id="fmax" name="max" placeholder="Max index..">
         </div>
       </div>
       <div class="row row1">
         <div class="col-12 col-md-6 col-lg-3">
-          <label for="fname">Nouvel index</label>
+          <label for="fname">Ancien index</label>
         </div>
         <div class="col-12 col-md-6 col-lg-9">
-          <input type="text" id="fmin" name="min" placeholder="Your min..">
+          <input type="text" id="fmin" name="min" placeholder="Min index..">
         </div>
       </div>
       <br>
@@ -296,7 +296,7 @@
           <td></td>
           <td></td>
           <td></td>
-          <td><?php echo $SOUS_Toatla = ($Total * $tva /100) + ($TypeCalibre * $tva /100)?></td>
+          <td><?php echo $SOUS_Toatla = $Total + ($TypeCalibre * $tva /100)?></td>
           <td class="text-secondary right">مجموع ض.ق.م</td>
         </tr>
         <?php
